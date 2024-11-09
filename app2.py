@@ -2,6 +2,14 @@ import streamlit as st
 import cv2
 import numpy as np
 import tensorflow as tf
+import google.generativeai as genai
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
+# Configure the gemini-pro model
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+model = genai.GenerativeModel('gemini-pro')
 
 # Load the TensorFlow Lite model
 interpreter = tf.lite.Interpreter(model_path="skin_condition_model.tflite")
