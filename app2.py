@@ -50,6 +50,19 @@ def make_prediction(img, interpreter):
     top_conditions = [(labels_dict[idx], output_data[idx]) for idx in top_indices]
     return top_conditions
 
+# Function to generate a warning message using gemini-pro model
+def generate_warning_message(top_conditions):
+    # Get the top condition (you can use any condition, here I choose the first one)
+    condition, probability = top_conditions[0]
+
+    # Create the prompt using the top predicted condition
+    prompt = f"Generate a warning type message of less than 100 words for the condition '{condition}' asking the person not to take lightly these conditions and supporting it with medical records if possible. Also, mention how Ayurvedic treatment can help him but don't provide the solution here and add this line at the end  use the Skin Veda app for further assistance"
+
+    # Generate content using gemini-pro model
+    response = model.generate_content(f"As an Ayurvedic doctor, give advice for face care: {prompt}")
+    generated_content = response.text.strip()
+    return generated_content
+
 # Streamlit UI
 st.title("Skin Condition Detector")
 st.markdown("Upload an image to analyze the skin condition.")
@@ -69,4 +82,8 @@ if uploaded_image is not None:
     top_conditions = make_prediction(img, interpreter)
     st.subheader("Top Detected Conditions")
     for condition, probability in top_conditions:
-        st.write(f"{condition}: {probability:.2f}")
+        st.write(f"{condition}: {probability:.3f}")
+    
+    # Generate and display the warning message
+    warning_message = generate_warning_message(top_conditions)
+    st.markdown(warning_message)
